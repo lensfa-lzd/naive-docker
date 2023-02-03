@@ -1,0 +1,24 @@
+{
+	
+	http_port 8089
+	https_port 8090
+	auto_https disable_certs
+	order forward_proxy before file_server
+}
+:8090, caddy.lensfa.com {
+	tls /cert/fullchain.pem /cert/privkey.pem
+	route {
+		# proxy
+		forward_proxy {
+			basic_auth lensfa Yx6136022
+			hide_ip
+			hide_via
+			probe_resistance
+		}
+
+		# 伪装网址
+		reverse_proxy https://demo.cloudreve.org {
+			header_up Host {upstream_hostport}
+		}
+	}
+}
